@@ -31,9 +31,8 @@ const (
 	ngServerLogFile      = "nailgun.log"
 	ngHeartbeatTimeout   = 60000
 	// socket tuning parms
-	socketThreadPoolSize = "50"
+	socketThreadPoolSize           = "50"
 	threadPoolPercentSocketReaders = "80"
-
 )
 
 // Setup for starting the Nailgun server
@@ -44,6 +43,7 @@ type NailGunServer struct {
 	process          *os.Process
 }
 
+// Manages starting the Nailgun server for the JMX Query Client
 func (ng *NailGunServer) StartNailgun() error {
 	//clear old socket file if exists
 	ng.removeSocket()
@@ -75,11 +75,11 @@ func (ng *NailGunServer) StartNailgun() error {
 
 	var ngServerArgs []string
 	ngServerArgs = append(ngServerArgs, "-Djna.nosys=true")
-	ngServerArgs = append(ngServerArgs, "-Djava.util.logging.config.file=" + ngServerLogConfig)
-	ngServerArgs = append(ngServerArgs, "-Dsun.rmi.transport.tcp.responseTimeout=" + to.String(rmiResponseTimeoutMS))
+	ngServerArgs = append(ngServerArgs, "-Djava.util.logging.config.file="+ngServerLogConfig)
+	ngServerArgs = append(ngServerArgs, "-Dsun.rmi.transport.tcp.responseTimeout="+to.String(rmiResponseTimeoutMS))
 	// tuning the JMX client for socket connections, prevents error 402
-	ngServerArgs = append(ngServerArgs, "-Dweblogic.ThreadPoolSize=" + socketThreadPoolSize)
-	ngServerArgs = append(ngServerArgs, "-Dweblogic.ThreadPoolPercentSocketReaders=" + threadPoolPercentSocketReaders)
+	ngServerArgs = append(ngServerArgs, "-Dweblogic.ThreadPoolSize="+socketThreadPoolSize)
+	ngServerArgs = append(ngServerArgs, "-Dweblogic.ThreadPoolPercentSocketReaders="+threadPoolPercentSocketReaders)
 
 	ngServerArgs = append(ngServerArgs, "-classpath")
 	ngServerArgs = append(ngServerArgs, strings.Join(classPath, ":"))

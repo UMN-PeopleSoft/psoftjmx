@@ -80,7 +80,7 @@ func NewClient(config *JMXConfig) (*PsoftJmxClient, error) {
 	}
 	srvlog.Debug("Started NailGun Server")
 	// verify valid domain inventory file, will reload before calling fetch
-	err = jmxClient.LoadTargets("")
+	err = jmxClient.LoadTargets()
 	if err != nil {
 		return nil, err
 	}

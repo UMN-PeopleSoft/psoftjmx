@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"github.com/UMN-PeopleSoft/nailgo"
 	"net"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -24,6 +24,7 @@ type JMXConnection struct {
 	Password   string
 }
 
+// Initiates the JMX Command throught the NailGun Client call
 func (jmxConn *JMXConnection) RunJMXCommand(domainName string, attrList []string) (rawResponse string, err error) {
 	rawResponse = ""
 	ngBuf := new(bytes.Buffer)
