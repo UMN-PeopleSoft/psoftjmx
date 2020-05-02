@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type BlackoutType struct {
@@ -81,6 +82,7 @@ func (cli *PsoftJmxClient) LoadTargets() error {
 	gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
 		r := csv.NewReader(in)
 		r.Comma = ' '
+		r.Comment = '#'
 		return r // Allows use pipe as delimiter
 	})
 	f, err2 := os.Open(cli.Config.PathInventoryFile)
@@ -93,6 +95,27 @@ func (cli *PsoftJmxClient) LoadTargets() error {
 	domainList := []*PsoftDomain{}
 	gocsv.UnmarshalWithoutHeaders(f, &domainList)
 	srvlog.Debug("Loaded these targets : " + fmt.Sprintf("%#v", domainList))
+	// Check if we should only load local domains
+	currHost, _ := os.Hostname()
+	shortHost := strings.Split(currHost, ".")[0]
+	for i := len(domainList) - 1; i >= 0; i-- {
+		if cli.Config.ConcatenateDomainWithHost {
+			if cli.Config.UseLastXCharactersOfHost > 0 {
+				domainList[i].DomainName = domainList[i].DomainName + shortHost[len(shortHost)-cli.Config.UseLastXCharactersOfHost:]
+			} else {
+				domainList[i].DomainName = domainList[i].DomainName + shortHost
+			}
+		}
+		if domainList[i].HostName != currHost && domainList[i].HostName != shortHost {
+			if cli.Config.LocalInventoryOnly {
+            copy(domainList[i:], domainList[i+1:])
+            domainList[len(domainList)-1] = nil
+				domainList = domainList[:len(domainList)-1]
+			}
+		} else {
+			domainList[i].HostName = "localhost"
+		}
+	}
 	cli.DomainList = domainList
 
 	return nil
@@ -108,6 +131,7 @@ func (cli *PsoftJmxClient) LoadBlackouts() error {
 	gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
 		r := csv.NewReader(in)
 		r.Comma = '|'
+		r.Comment = '#'
 		return r // Allows use pipe as delimiter
 	})
 	f, err2 := os.Open(cli.Config.PathBlackoutFile)
@@ -131,6 +155,7 @@ func (cli *PsoftJmxClient) LoadExclusions() error {
 	}
 	gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
 		r := csv.NewReader(in)
+		r.Comment = '#'
 		return r // Allows use pipe as delimiter
 	})
 	f, err2 := os.Open(cli.Config.PathExclusionFile)

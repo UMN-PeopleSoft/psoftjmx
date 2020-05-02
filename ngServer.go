@@ -24,15 +24,15 @@ var (
 const (
 	nailGunServerJar     = "nailgun-server-1.0.0-SNAPSHOT-uber.jar"
 	weblogicJMXClientJar = "wlthint3client.jar"
-	jmxQueryJar          = "JMXQuery-1.0-SNAPSHOT.jar"
+	jmxQueryJar          = "JMXQuery-1.1-SNAPSHOT.jar"
 	nailGunClass         = "com.facebook.nailgun.NGServer"
 	rmiResponseTimeoutMS = 20000
 	ngServerLogConfig    = "logging.properties"
 	ngServerLogFile      = "nailgun.log"
 	ngHeartbeatTimeout   = 60000
 	// socket tuning parms
-	socketThreadPoolSize           = "50"
-	threadPoolPercentSocketReaders = "80"
+	socketThreadPoolSize           = "70"
+	threadPoolPercentSocketReaders = "90"
 )
 
 // Setup for starting the Nailgun server

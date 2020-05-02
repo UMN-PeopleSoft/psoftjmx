@@ -21,8 +21,6 @@ type AttributeType struct {
 	JMXClass    string `yaml:"jmxClass"`    // JMX bean class name (path)
 	JMXAttrName string `yaml:"jmxAttrName"` // metric attribute name
 	JMXWhere    string `yaml:"attrWhere"`   // filter on aggregate sample
-//	DataType    string `yaml:"dataType"`    // data type: int, string, float
-//	Group       string `yaml:"group"`       // group to place field into for metric organization
 }
 
 // List of configured metrics from JMX source, pulled from a xxx_metric.yaml file
@@ -260,7 +258,7 @@ func (metricConfig *Metrics) MapData(targetType string, jmxDataString string) (m
 	}
 	// Build the new app server domain Load metric
 	if targetType == "app" && mappedData["Health"] != 5 && mappedData["appsrv.queue.server_count"].(float64) > 0 {
-		mappedData["appsrv.load"] = mappedData["appsrv.active_pct"].(float64) + math.Round(to.Float64(mappedData["appsrv.queue.depth"])/to.Float64(mappedData["appsrv.queue.server_count"])*100)/100
+		mappedData["appsrv.load"] = mappedData["appsrv.active_pct"].(float64) + math.Round(to.Float64(mappedData["appsrv.queue.depth"])/to.Float64(mappedData["appsrv.queue.server_count"])*75)/100
 	}
 
 	return mappedData, nil
